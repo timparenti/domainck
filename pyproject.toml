@@ -4,14 +4,16 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'domainck'
-version = '0.0.1'
+version = '0.1.0'
 description = "Domain WHOIS checker"
 readme = "README.md"
 authors = [
   { name = 'Tim Parenti', email = 'timparenti@gmail.com' }
 ]
 requires-python = '>=3.11'
-dependencies = []
+dependencies = [
+  'python-whois ~= 0.9.4' # https://github.com/richardpenman/whois
+]
 
 [project.urls]
 repository = "https://github.com/timparenti/domainck"
