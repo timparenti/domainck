@@ -1,0 +1,20 @@
+[build-system]
+requires = ['setuptools']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'domainck'
+version = '0.0.1'
+description = "Domain WHOIS checker"
+readme = "README.md"
+authors = [
+  { name = 'Tim Parenti', email = 'timparenti@gmail.com' }
+]
+requires-python = '>=3.11'
+dependencies = []
+
+[project.urls]
+repository = "https://github.com/timparenti/domainck"
+
+[tool.setuptools]
+# Use automatic discovery
