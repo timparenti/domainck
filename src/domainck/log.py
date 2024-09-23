@@ -42,10 +42,14 @@ class LogHandler():
     self.logger.addHandler(handler)
 
   def start(self, pkg):
+    host = socket.getfqdn()
+    if host == "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa":
+      host = "localhost"
+
     self.logger.info(f"Package name: {pkg}")
     self.logger.info(f"Package version: {importlib.metadata.version(pkg)}")
     self.logger.info(f"Logging began: {helpers.now()}")
-    self.logger.info(f"Local host: {socket.getfqdn()}")
+    self.logger.info(f"Local host: {host}")
     self.logger.info(f"Log location: {self.log_path}")
     self.logger.info("--------------------")
 
