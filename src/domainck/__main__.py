@@ -15,7 +15,8 @@ import whois
 cli = CliParser('domainck', "python -m domainck")
 cli.option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='run verbosely')
 cli.option('-l', '--logdir', dest='log_dir', metavar='DIR', action='store', default="log", help="specify a path for logging")
-cli.option('-d', '--domains', dest='domain_list', nargs='+', metavar='FQDN', action='store', default=[], required=True, help="list of one or more domains to check")
+cli.file_read_option('-D', '--domainfile', dest='domain_file', metavar='FILE', action='store', default=None, help="file containing list domains to check")
+cli.option('-d', '--domains', dest='domains', nargs='+', metavar='FQDN', action='store', default=[], help="explicit list of domains to check")
 cli.option('-r', '--retries', dest='retries', metavar='N', action='store', type=int, default=3, help="number of retry attempts when fetching WHOIS data")
 args = cli.parse()
 
@@ -29,9 +30,19 @@ else:
 logger = log_handler.start('domainck')
 
 
-whois_data = {}
-domains_remaining = set(args.domain_list)
+if args.domain_file is not None:
+  domain_list = args.domain_file.read().splitlines()
+else:
+  domain_list = []
+domain_list.extend(args.domains)
 
+whois_data = {}
+if len(domain_list) == 0:
+  logger.error("No domains specified.")
+  exit(1)
+
+
+domains_remaining = set(domain_list)
 for r in range(args.retries):
   logger.info(f"Attempt {r+1}/{args.retries}, {len(domains_remaining)} domains to check.")
   fqdn_list = list(domains_remaining)
