@@ -1,4 +1,5 @@
 import datetime
+from json import JSONEncoder
 
 
 def iso_to_local(dts):
@@ -10,3 +11,10 @@ def now():
 
 def run_date_filename():
  return now().strftime("%Y-%m-%d-%H%M%S")
+
+# From https://stackoverflow.com/a/3768975/782129, 2019-04-25
+class WhoisJSONEncoder(JSONEncoder):
+  def default(self, obj):
+    if isinstance(obj, datetime.datetime):
+      return str(obj)
+    return JSONEncoder.default(self, obj)
