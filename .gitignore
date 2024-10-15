@@ -8,3 +8,5 @@ output
 *.egg-info
 *.pyc
 *.swp
+
+domains.csv

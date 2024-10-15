@@ -12,6 +12,8 @@ from . import helpers
 
 import whois
 
+from .whois_encode.encode import normalize, WhoisJSONEncoder
+
 
 # Parse command line arguments.
 cli = CliParser('domainck', "python -m domainck")
@@ -59,6 +61,7 @@ for r in range(args.retries):
     w = {}
     try:
       w = whois.whois(fqdn)
+      w = normalize(w)
       logger.info(f"- Expiration date for {fqdn} is {w.expiration_date}")
       domains_remaining.remove(fqdn)
     except whois.parser.PywhoisError as e:
@@ -71,7 +74,7 @@ for r in range(args.retries):
       continue
     finally:
       # Statefully store this domain's WHOIS data to disk processing.
-      cacher.write_file(f"{fqdn}.json", json.dumps(w, indent=2, cls=helpers.WhoisJSONEncoder))
+      cacher.write_file(f"{fqdn}.json", json.dumps(w, indent=2, cls=WhoisJSONEncoder))
 
   if len(domains_remaining) == 0:
     break
