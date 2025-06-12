@@ -19,8 +19,8 @@ def normalize(w):
         if isinstance(w[key], list):
           w[key] = w[key][0]
 
-      case 'domain_name':
-        # Normalize domain name to lower case.
+      case ( 'domain_name' | 'whois_server' ):
+        # Normalize domain name and whois server to lower case.
         if isinstance(w[key], list):
           w[key] = w[key][0].lower()
         else:
@@ -41,6 +41,8 @@ def normalize(w):
       case 'registrar':
         # Normalize variant versions of known registrar names.
         match w[key]:
+          case "DREAMHOST":
+            w[key] = "DreamHost, LLC"
           case "ENOM, INC.":
             w[key] = "Enom, Inc."
           case "NAMECHEAP INC":
