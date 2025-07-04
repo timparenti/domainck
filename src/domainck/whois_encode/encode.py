@@ -43,8 +43,8 @@ def normalize(w):
         match w[key]:
           case "DREAMHOST":
             w[key] = "DreamHost, LLC"
-          case "ENOM, INC.":
-            w[key] = "Enom, Inc."
+          case ( "ENOM, INC." | "Enom, Inc." ):
+            w[key] = "eNom, LLC"
           case "NAMECHEAP INC":
             w[key] = "NameCheap, Inc."
           case _:
