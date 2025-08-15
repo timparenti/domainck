@@ -36,7 +36,7 @@ def normalize(w):
             if lower_item not in seen:
               seen.add(lower_item)
               result.append(lower_item)
-          w[key] = result
+          w[key] = sorted(result)
 
       case 'registrar':
         # Normalize variant versions of known registrar names.
@@ -50,9 +50,17 @@ def normalize(w):
           case _:
             pass
 
-      case ( 'referral_url' | 'emails' | 'name' | 'org' | 'address'
-             | 'city' | 'state' | 'registrant_postal_code' | 'country' ):
-        # Remove certain unneeded keys.
+      case 'status':
+        # Sort statuses when more than one is returned.
+        if isinstance(w[key], list):
+          w[key] = sorted(w[key])
+
+      case ( 'referral_url' | 'domain__id' | 'emails' | 'name' | 'org'
+             | 'address' | 'city' | 'state' | 'country'
+             | 'registrar_id' | 'registrar_url'
+             | 'registrant_name' | 'registrant_state_province'
+             | 'registrant_postal_code' | 'registrant_country' ):
+        # Remove certain unneeded or obscure keys.
         w.pop(key, None)
 
       case _:
