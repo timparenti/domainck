@@ -1,6 +1,8 @@
 import datetime
 from json import JSONEncoder
 
+from .. import helpers
+
 
 # From https://stackoverflow.com/a/3768975/782129, 2019-04-25
 class WhoisJSONEncoder(JSONEncoder):
@@ -14,10 +16,30 @@ def normalize(w):
   for key in list(w.keys()):
     match key:
 
-      case 'updated_date' | 'creation_date' | 'expiration_date':
+      case ( 'updated_date' | 'creation_date' | 'expiration_date' ):
         # Only include the first datetime when more than one is returned.
         if isinstance(w[key], list):
           w[key] = w[key][0]
+        # These timestamps are returned naïvely as UTC; make the objects
+        # timezone-aware.
+        w[key] = w[key].replace(tzinfo=datetime.timezone.utc)
+
+	# For expiration dates only, add a field summarizing expiration status:
+        if key == 'expiration_date':
+          thresholds = [
+            datetime.timedelta(days=45),
+            datetime.timedelta(days=21),
+            datetime.timedelta(days=7),
+            datetime.timedelta(days=0)
+          ]
+          time_to_exp = w[key] - helpers.now()
+          for threshold in thresholds:
+            if time_to_exp < threshold:
+              exp_status = f"Less than {threshold}"
+              break
+          else:
+            exp_status = "OK"
+          w['expiration_status'] = exp_status
 
       case ( 'domain_name' | 'whois_server' ):
         # Normalize domain name and whois server to lower case.
