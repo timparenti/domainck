@@ -81,7 +81,8 @@ def normalize(w):
              | 'address' | 'city' | 'state' | 'country'
              | 'registrar_id' | 'registrar_url'
              | 'registrant_name' | 'registrant_state_province'
-             | 'registrant_postal_code' | 'registrant_country' ):
+             | 'registrant_postal_code' | 'registrant_country'
+             | 'reseller' ):
         # Remove certain unneeded or obscure keys.
         w.pop(key, None)
 
