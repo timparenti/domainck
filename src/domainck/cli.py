@@ -16,6 +16,9 @@ class CliParser():
   def file_read_option(self, *args, **kwargs):
     self.parser.add_argument(*args, type=argparse.FileType('r'), **kwargs)
 
+  def help(self):
+    self.parser.print_help()
+
   def parse(self):
     args = self.parser.parse_args()
     return args

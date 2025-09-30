@@ -42,7 +42,9 @@ else:
 domain_list.extend(args.domains)
 
 if len(domain_list) == 0:
-  logger.error("No domains specified.")
+  logger.error("No domains specified.  Provide a file with -D or list individually with -d.")
+  print()
+  cli.help()
   exit(1)
 
 
