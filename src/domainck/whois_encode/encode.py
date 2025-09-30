@@ -27,10 +27,10 @@ def normalize(w):
 	# For expiration dates only, add a field summarizing expiration status:
         if key == 'expiration_date':
           thresholds = [
-            datetime.timedelta(days=45),
-            datetime.timedelta(days=21),
+            datetime.timedelta(days=0),
             datetime.timedelta(days=7),
-            datetime.timedelta(days=0)
+            datetime.timedelta(days=21),
+            datetime.timedelta(days=45)
           ]
           time_to_exp = w[key] - helpers.now()
           for threshold in thresholds:
