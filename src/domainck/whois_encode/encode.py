@@ -82,6 +82,7 @@ def normalize(w):
              | 'registrar_id' | 'registrar_url'
              | 'registrant_name' | 'registrant_state_province'
              | 'registrant_postal_code' | 'registrant_country'
+             | 'tech_name' | 'tech_org' | 'admin_name' | 'admin_org'
              | 'reseller' ):
         # Remove certain unneeded or obscure keys.
         w.pop(key, None)

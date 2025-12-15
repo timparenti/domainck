@@ -66,7 +66,7 @@ for r in range(args.retries):
       w = normalize(w)
       logger.info(f"- Expiration date for {fqdn} is {w.expiration_date}")
       domains_remaining.remove(fqdn)
-    except whois.parser.PywhoisError as e:
+    except whois.parser.WhoisDomainNotFoundError as e:
       logger.warning(f"- No match found for {fqdn}")
       domains_remaining.remove(fqdn)
       continue
