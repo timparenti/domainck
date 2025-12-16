@@ -54,15 +54,16 @@ cacher.clear_working_dir()
 cacher.write_file("_domains.csv", '\n'.join(sorted(domain_list)))
 domains_remaining = set(domain_list)
 for r in range(args.retries):
-  logger.info(f"Attempt {r+1}/{args.retries}, {len(domains_remaining)} domains to check.")
+  n = len(domains_remaining)
+  logger.info(f"Attempt {r+1}/{args.retries}, {n} domains to check.")
   fqdn_list = list(domains_remaining)
 
   # Fetch WHOIS data for each domain.
-  for fqdn in fqdn_list:
-    logger.info(f"Requesting WHOIS data for {fqdn} ...")
+  for i, fqdn in enumerate(fqdn_list, start=1):
+    logger.info(f"[{i}/{n}] Requesting WHOIS data for {fqdn} ...")
     w = {}
     try:
-      w = whois.whois(fqdn)
+      w = whois.whois(fqdn, quiet=True)
       w = normalize(w)
       logger.info(f"- Expiration date for {fqdn} is {w.expiration_date}")
       domains_remaining.remove(fqdn)
@@ -75,7 +76,7 @@ for r in range(args.retries):
       logger.warning(f"- Exception {exc_type.__name__} occurred on {fqdn}, keeping for re-attempt")
       continue
     finally:
-      # Statefully store this domain's WHOIS data to disk processing.
+      # Statefully store this domain's WHOIS data to disk for processing.
       cacher.write_file(f"{fqdn}.json", json.dumps(w, indent=2, cls=WhoisJSONEncoder))
 
   if len(domains_remaining) == 0:
