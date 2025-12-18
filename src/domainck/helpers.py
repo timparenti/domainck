@@ -1,4 +1,5 @@
 import datetime
+import socket
 
 
 def iso_to_local(dts):
@@ -10,3 +11,9 @@ def now():
 
 def run_date_filename():
  return now().strftime("%Y-%m-%d-%H%M%S")
+
+def get_local_hostname():
+  host = socket.getfqdn()
+  if host == "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa":
+    host = "localhost"
+  return host

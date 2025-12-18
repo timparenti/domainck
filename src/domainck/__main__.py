@@ -5,8 +5,10 @@ import sys
 import logging
 import json
 
+from importlib import metadata
+
 from .cli import CliParser
-from .log import LogHandler
+from .log import LogManager
 from .gitcache import GitCacheHandler
 from . import helpers
 
@@ -15,8 +17,10 @@ import whois
 from .whois_encode.encode import normalize, WhoisJSONEncoder
 
 
+pkg = "domainck"
+
 # Parse command line arguments.
-cli = CliParser('domainck', "python -m domainck")
+cli = CliParser(pkg, f"python -m {pkg}")
 cli.option('-v', '--verbose', dest='verbose', action='store_true', default=False, help='run verbosely')
 cli.option('-l', '--logdir', dest='log_dir', metavar='DIR', action='store', default="log", help="specify a path for logging")
 cli.option('-c', '--cachedir', dest='cache_dir', metavar='DIR', action='store', default="cache", help="specify a path for on-disk caching")
@@ -26,13 +30,24 @@ cli.option('-r', '--retries', dest='retries', metavar='N', action='store', type=
 args = cli.parse()
 
 # Configure logging.
-log_handler = LogHandler()
-log_handler.file_output(args.log_dir)
+logger = logging.getLogger(pkg)
+logger.setLevel(logging.DEBUG)
+
+log_manager = LogManager()
+file_log_path = log_manager.add_file_output(args.log_dir)
 if args.verbose:
-  log_handler.stream_output()
+  log_manager.add_stream_output()
 else:
-  log_handler.stream_output(log_level=logging.ERROR)
-logger = log_handler.start('domainck')
+  log_manager.add_stream_output(log_level=logging.ERROR)
+log_manager.attach(logger)
+
+# Begin logging.
+logger.info(f"Package name: {pkg}")
+logger.info(f"Package version: {metadata.version(pkg)}")
+logger.info(f"Logging began: {helpers.now()}")
+logger.info(f"Local host: {helpers.get_local_hostname()}")
+logger.info(f"Log location: {file_log_path}")
+logger.info("--------------------")
 
 
 if args.domain_file is not None:
