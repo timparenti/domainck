@@ -4,6 +4,8 @@ import sys
 
 import logging
 import json
+import argparse
+import pathlib
 
 from importlib import metadata
 
@@ -27,14 +29,14 @@ cli.option('-c', '--cachedir', dest='cache_dir', metavar='DIR', action='store', 
 cli.file_read_option('-D', '--domainfile', dest='domain_file', metavar='FILE', action='store', default=None, help="file containing list domains to check")
 cli.option('-d', '--domains', dest='domains', nargs='+', metavar='FQDN', action='store', default=[], help="explicit list of domains to check")
 cli.option('-r', '--retries', dest='retries', metavar='N', action='store', type=int, default=3, help="number of retry attempts when fetching WHOIS data")
-args = cli.parse()
+args: argparse.Namespace = cli.parse()
 
 # Configure logging.
-logger = logging.getLogger(pkg)
+logger: logging.Logger = logging.getLogger(pkg)
 logger.setLevel(logging.DEBUG)
 
-log_manager = LogManager()
-file_log_path = log_manager.add_file_output(args.log_dir)
+log_manager: LogManager = LogManager()
+file_log_path: pathlib.Path = log_manager.add_file_output(args.log_dir)
 if args.verbose:
   log_manager.add_stream_output()
 else:
@@ -50,6 +52,7 @@ logger.info(f"Log location: {file_log_path}")
 logger.info("--------------------")
 
 
+domain_list: list[str]
 if args.domain_file is not None:
   domain_list = args.domain_file.read().splitlines()
 else:
@@ -67,7 +70,7 @@ cacher = GitCacheHandler(args.cache_dir)
 cacher.clear_working_dir()
 
 cacher.write_file("_domains.csv", '\n'.join(sorted(domain_list)))
-domains_remaining = set(domain_list)
+domains_remaining: set[str] = set(domain_list)
 for r in range(args.retries):
   n = len(domains_remaining)
   logger.info(f"Attempt {r+1}/{args.retries}, {n} domains to check.")
@@ -80,7 +83,7 @@ for r in range(args.retries):
     try:
       w = whois.whois(fqdn, quiet=True)
       w = normalize(w)
-      logger.info(f"- Expiration date for {fqdn} is {w.expiration_date}")
+      logger.info(f"- Expiration date for {fqdn} is {w.get('expiration_date')}")
       domains_remaining.remove(fqdn)
     except whois.parser.WhoisDomainNotFoundError as e:
       logger.warning(f"- No match found for {fqdn}")
@@ -88,7 +91,7 @@ for r in range(args.retries):
       continue
     except Exception as e:
       exc_type, exc_value, exc_traceback = sys.exc_info()
-      logger.warning(f"- Exception {exc_type.__name__} occurred on {fqdn}, keeping for re-attempt")
+      logger.warning(f"- Exception {(exc_type.__name__ if exc_type else "<unknown>")} occurred on {fqdn}, keeping for re-attempt")
       continue
     finally:
       # Statefully store this domain's WHOIS data to disk for processing.
@@ -107,7 +110,7 @@ if len(domains_remaining) != 0:
 
 # Commit current cache state to the cache repo.
 logger.info("Committing current cache state to the cache repo...")
-commit_success = cacher.commit()
+commit_success: bool = cacher.commit()
 if not commit_success:
   logger.info("... no changes.")
 else:

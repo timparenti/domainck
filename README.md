@@ -30,11 +30,14 @@ pip install --upgrade pip
 pip install build
 ```
 
-Install the package and its dependencies to the build environment in "editable"
-mode:
+Install the package and its development dependencies
+to the build environment in "editable" mode:
 ```
-pip install -e .
+pip install -e ".[dev]"
 ```
+
+Basic static type-checking can be done by running `mypy`
+from the project root within the activated `venv`.
 
 ### Test and production environments
 
@@ -68,10 +71,10 @@ cd ~/domainck
 source .venv/bin/activate
 ```
 
-Reinstall the updated package and its dependencies to the build environment in
-"editable" mode:
+Reinstall the updated package and its development dependencies
+to the build environment in "editable" mode:
 ```
-pip install -e .
+pip install -e ".[dev]"
 ```
 
 ### Test and production environments

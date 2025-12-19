@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import datetime
 from json import JSONEncoder
 
@@ -6,13 +8,13 @@ from .. import helpers
 
 # From https://stackoverflow.com/a/3768975/782129, 2019-04-25
 class WhoisJSONEncoder(JSONEncoder):
-  def default(self, obj):
+  def default(self, obj: Any) -> Any:
     if isinstance(obj, datetime.datetime):
       return str(obj)
     return JSONEncoder.default(self, obj)
 
 
-def normalize(w):
+def normalize(w: Dict[str, Any]) -> Dict[str, Any]:
   for key in list(w.keys()):
     match key:
 

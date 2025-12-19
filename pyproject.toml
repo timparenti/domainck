@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'domainck'
-version = '1.1.4'
+version = '1.2.0'
 description = "Domain WHOIS checker"
 readme = "README.md"
 authors = [
@@ -16,8 +16,19 @@ dependencies = [
   'GitPython ~= 3.1.45' # https://github.com/gitpython-developers/GitPython
 ]
 
+[project.optional-dependencies]
+dev = [
+  'mypy ~= 1.19' # https://github.com/python/mypy
+]
+
 [project.urls]
 repository = "https://github.com/timparenti/domainck"
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+strict = false
+files = ["src/domainck"]
 
 [tool.setuptools]
 # Use automatic discovery

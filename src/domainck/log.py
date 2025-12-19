@@ -12,10 +12,12 @@ from . import helpers
 # logging.FileHandler() in order to streamline preferred formats.
 
 class LogManager():
-  def __init__(self):
+  handlers: list[logging.Handler]
+
+  def __init__(self) -> None:
     self.handlers = []
 
-  def add_file_output(self, log_dir, log_file=helpers.run_date_filename(), log_suffix='log', log_level=logging.DEBUG):
+  def add_file_output(self, log_dir: str, log_file: str = helpers.run_date_filename(), log_suffix: str = 'log', log_level: int = logging.DEBUG) -> pathlib.Path:
     log_name = f'{log_file}.{log_suffix}'
 
     pathlib.Path(log_dir).resolve().mkdir(parents=True, exist_ok=True)
@@ -32,14 +34,12 @@ class LogManager():
 
     return log_path
 
-  def add_stream_output(self, stream=sys.stdout, log_level=logging.INFO):
+  def add_stream_output(self, stream=sys.stdout, log_level: int = logging.INFO) -> None:
     handler = logging.StreamHandler(stream)
     handler.setFormatter(logging.Formatter('%(message)s'))
     handler.setLevel(log_level)
     self.handlers.append(handler)
 
-  def attach(self, logger):
+  def attach(self, logger: logging.Logger) -> None:
     for h in self.handlers:
       logger.addHandler(h)
-
-    return logger
